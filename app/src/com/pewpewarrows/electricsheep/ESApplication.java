@@ -2,13 +2,16 @@ package com.pewpewarrows.electricsheep;
 
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.ClientConnectionManager;
+import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
 
 import android.app.Application;
 import android.content.SharedPreferences;
 
+import com.pewpewarrows.electricsheep.net.HttpClientFactory;
 import com.pewpewarrows.electricsheep.shim.CompatShim;
 
 /**
@@ -48,8 +51,8 @@ public abstract class ESApplication extends Application {
 	 *            general prefereces. The name of the overall application is a
 	 *            good choice.
 	 */
-	protected void setupApp(String name) {
-		mHttpClient = createHttpClient();
+	protected void setupApp(String name, int timeout) {
+		mHttpClient = HttpClientFactory.create(timeout);
 		mSettings = getSharedPreferences(name, MODE_PRIVATE);
 	}
 
@@ -66,26 +69,11 @@ public abstract class ESApplication extends Application {
 	}
 
 	/**
-	 * Generate a thread-safe HttpClient
-	 * 
-	 * @return HttpClient
-	 */
-	private HttpClient createHttpClient() {
-		DefaultHttpClient client = new DefaultHttpClient();
-		ClientConnectionManager mgr = client.getConnectionManager();
-		HttpParams params = client.getParams();
-
-		return new DefaultHttpClient(new ThreadSafeClientConnManager(params,
-				mgr.getSchemeRegistry()), params);
-	}
-
-	/**
 	 * If the application's shared HttpClient exists, safely destroy it.
 	 */
 	private void shutdownHttpClient() {
-		if ((mHttpClient != null)
-				&& (mHttpClient.getConnectionManager() != null)) {
-			mHttpClient.getConnectionManager().shutdown();
+		if (mHttpClient != null) {
+			HttpClientFactory.shutdown(mHttpClient);
 		}
 	}
 

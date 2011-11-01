@@ -37,6 +37,8 @@ public abstract class CompatShim {
 		/*
 		 * Each shim extends the previous version's shim. This ensures that all
 		 * compatibility fixes are applied down the chain.
+		 * 
+		 * TODO: Make these extendable and customizable by user's application.
 		 */
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			instance = new IceCreamSandwichShim(debug);
