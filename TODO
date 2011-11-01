@@ -1,0 +1,30 @@
+ElectricSheep:
+
+assets/template/
+    res/
+    LocalSettings
+    Constants
+
+src/com/pewpewarrows/electricsheep/
+    activities/
+    adapters/
+    content/ (contains ContentProviders and BroadcastReceivers)
+    dialogs/
+    net/
+        Authenticator
+        OAuth
+        OpenID
+        BasicAuth
+        Session
+    security/
+    services/
+    syncadapters/
+    testing/
+    widgets/
+
+    logger?
+    client?
+    platform?
+    analytics?
+    errors?
+    cache?
