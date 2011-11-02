@@ -24,12 +24,12 @@ abstract public class AbstractAuthenticationService extends Service {
 	 */
 	@Override
 	public void onCreate() {
-		super.onCreate();
+		// TODO: super.onCreate(); ?
 
 		try {
 			/*
 			 * All you need to know: makes a new instance of whatever class is
-			 * in mAuthenticatorKlass, and assignes it to mAuthenticator
+			 * in mAuthenticatorKlass, and assigns it to mAuthenticator
 			 */
 			Constructor<AbstractAccountAuthenticator> c = mAuthenticatorKlass
 					.getConstructor(new Class[] { Context.class });
@@ -59,6 +59,8 @@ abstract public class AbstractAuthenticationService extends Service {
 	 */
 	@Override
 	public IBinder onBind(Intent intent) {
+		// TODO: super.onBind(intent); ?
+		
 		return mAuthenticator.getIBinder();
 	}
 

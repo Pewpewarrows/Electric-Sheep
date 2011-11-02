@@ -1,5 +1,8 @@
 ElectricSheep:
 
+Go through all available AndroidManifest tags for best practices.
+Setup ProGuard.
+
 assets/template/
     res/
     LocalSettings
@@ -8,8 +11,11 @@ assets/template/
 src/com/pewpewarrows/electricsheep/
     activities/
     adapters/
+    analytics/
+    cache/
     content/ (contains ContentProviders and BroadcastReceivers)
     dialogs/
+    error/
     net/
         Authenticator
         OAuth
@@ -17,14 +23,9 @@ src/com/pewpewarrows/electricsheep/
         BasicAuth
         Session
     security/
-    services/
     syncadapters/
     testing/
     widgets/
 
-    logger?
     client?
     platform?
-    analytics?
-    errors?
-    cache?
