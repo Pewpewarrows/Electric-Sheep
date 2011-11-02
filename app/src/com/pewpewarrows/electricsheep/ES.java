@@ -11,7 +11,7 @@ public final class ES {
 	// public static final boolean DEBUG = true;
 	
 	/**
-	 * Intentially private. Java has no native way to describe a class that
+	 * Intentionally private. Java has no native way to describe a class that
 	 * should never be instantiated.
 	 * 
 	 * The error is thrown in the event that someone attempts to be sneaky and
