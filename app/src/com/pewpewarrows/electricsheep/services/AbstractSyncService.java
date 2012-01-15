@@ -18,7 +18,7 @@ public abstract class AbstractSyncService extends Service {
 
 	private static final Object sSyncAdapterLock = new Object();
 	private static AbstractThreadedSyncAdapter sSyncAdapter = null;
-	protected Class<AbstractThreadedSyncAdapter> mSyncAdapterKlass;
+	protected Class mSyncAdapterKlass;
 
 	/**
 	 * {@inheritDoc}

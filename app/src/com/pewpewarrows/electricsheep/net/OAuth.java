@@ -3,6 +3,8 @@ package com.pewpewarrows.electricsheep.net;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+import com.pewpewarrows.electricsheep.log.Log;
+
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;

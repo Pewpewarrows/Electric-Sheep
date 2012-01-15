@@ -12,14 +12,12 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.pewpewarrows.electricsheep.activities.OAuthAccountActivity;
-
 /**
  * TODO: This desperately needs a better name!
  */
 public abstract class OAuthAuthenticator extends AbstractAccountAuthenticator {
 
-	protected Class<OAuthAccountActivity> mAccountActivityKlass;
+	protected Class mAccountActivityKlass;
 
 	private final Context mContext;
 
@@ -38,9 +36,11 @@ public abstract class OAuthAuthenticator extends AbstractAccountAuthenticator {
 			String[] requiredFeatures, Bundle options)
 			throws NetworkErrorException {
 		Intent intent = new Intent(mContext, mAccountActivityKlass);
+//		intent.putExtra(AuthenticatorActivity.PARAM_AUTHTOKEN_TYPE,
+//	            authTokenType);
 		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
 				response);
-
+		
 		Bundle bundle = new Bundle();
 		bundle.putParcelable(AccountManager.KEY_INTENT, intent);
 

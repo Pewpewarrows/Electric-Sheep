@@ -1,9 +1,20 @@
 package com.pewpewarrows.electricsheep.activities;
 
+import java.io.UnsupportedEncodingException;
+
+import oauth.signpost.exception.OAuthCommunicationException;
+import oauth.signpost.exception.OAuthExpectationFailedException;
+import oauth.signpost.exception.OAuthMessageSignerException;
+import oauth.signpost.exception.OAuthNotAuthorizedException;
+
+import com.pewpewarrows.electricsheep.log.Log;
+import com.pewpewarrows.electricsheep.net.OAuth;
+
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 /**
@@ -14,6 +25,7 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 	private final int OAUTH_ACTIVITY_CODE = 1;
 
 	private AccountManager mAccountManager;
+	private OAuth mOAuth;
 
 	protected String mConsumerKey;
 	protected String mConsumerSecret;
@@ -35,48 +47,103 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		/*
+		 * Note for future self to save frustration:
+		 * AccountAuthenticatorActivities cannot call startActivityForResult
+		 * for some weird reason. Well, the call technically works (the activity
+		 * starts), but this class is immediately given a response of 
+		 * RESULT_CANCELED, even while the new activity is all running fine and
+		 * dandy. But that new activity cannot ever inform this one of its
+		 * results, because this one already immediately received a 
+		 * RESULT_CANCELED from some phantom activity or something.
+		 * 
+		 * The normal startActivity call seems to work fine.
+		 */
 
 		mAccountManager = AccountManager.get(this);
 
-		Intent intent = new Intent(this, OAuthActivity.class);
+		mOAuth = new OAuth(mConsumerKey, mConsumerSecret, mCallbackUrl);
 
-		intent.putExtra(OAuthActivity.PARAM_CONSUMER_KEY, mConsumerKey);
-		intent.putExtra(OAuthActivity.PARAM_CONSUMER_SECRET, mConsumerSecret);
-		intent.putExtra(OAuthActivity.PARAM_CALLBACK_URL, mCallbackUrl);
-		intent.putExtra(OAuthActivity.PARAM_REQUEST_URL, mRequestUrl);
-		intent.putExtra(OAuthActivity.PARAM_ACCESS_URL, mAccessUrl);
-		intent.putExtra(OAuthActivity.PARAM_AUTHORIZE_URL, mAuthorizeUrl);
-		intent.putExtra(OAuthActivity.PARAM_SCOPE, mScope);
-		intent.putExtra(OAuthActivity.PARAM_ENCODING, mEncoding);
-		intent.putExtra(OAuthActivity.PARAM_CALLBACK_SCHEME, mCallbackScheme);
+		try {
+			mOAuth.setupProvider(mRequestUrl, mAccessUrl, mAuthorizeUrl,
+					mScope, mEncoding);
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 
-		startActivityForResult(intent, OAUTH_ACTIVITY_CODE);
+		getRequestToken();
+		
+		Log.i("", "Completed OAuthAccountActivity onCreate");
 	}
-
+	
 	/**
-	 * {@inheritDoc}
+	 * Should be called after the OAuth authentication request returns, since
+	 * this activity is tied to the callback URL.
 	 */
 	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent data) {
-		switch (requestCode) {
-		case OAUTH_ACTIVITY_CODE:
-			setupOAuthAccount(resultCode, data);
-			break;
-		default:
-			break;
+	public void onNewIntent(Intent intent) {
+		super.onNewIntent(intent);
+
+		Log.i("", "Inside OAuthAccountActivity onNewIntent");
+		Uri uri = intent.getData();
+
+		if (uri != null && uri.getScheme().equals(mCallbackScheme)) {
+			getAccessToken(uri);
 		}
 	}
 
-	private void setupOAuthAccount(int resultCode, Intent data) {
-		if (resultCode != RESULT_OK) {
-			// TODO: yell and complain
+	private void getRequestToken() {
+		try {
+			Log.i("", "Inside OAuthAccountActivity getRequestToken");
+			String url = mOAuth.getRequestToken();
+			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
+					.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
+							| Intent.FLAG_ACTIVITY_NO_HISTORY
+							| Intent.FLAG_FROM_BACKGROUND);
+			this.startActivity(intent);
+		} catch (OAuthMessageSignerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OAuthNotAuthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OAuthExpectationFailedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OAuthCommunicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+	}
 
-		Bundle extras = data.getExtras();
+	private void getAccessToken(Uri uri) {
+		Log.i("", "Inside OAuthAccountActivity getAccessToken");
+		String verifier = uri
+				.getQueryParameter(oauth.signpost.OAuth.OAUTH_VERIFIER);
 
-		String oAuthToken = extras.getString(oauth.signpost.OAuth.OAUTH_TOKEN);
-		String oAuthSecret = extras
-				.getString(oauth.signpost.OAuth.OAUTH_TOKEN_SECRET);
+		try {
+			String[] tokens = mOAuth.getAccessToken(verifier);
+			
+			setupOAuthAccount(tokens[0], tokens[1]);
+		} catch (OAuthMessageSignerException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OAuthNotAuthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OAuthExpectationFailedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (OAuthCommunicationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	private void setupOAuthAccount(String oAuthToken, String oAuthSecret) {
+		Log.i("", "Inside OAuthAccountActivity setupOAuthAccount");
 		String username = getUsername();
 
 		Account account = new Account(username, mAccountType);
@@ -100,9 +167,7 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 		finish();
 	}
 
-	protected String getUsername() {
-		return "";
-	}
+	protected abstract String getUsername();
 
 	public String getOAuthTokenType() {
 		return mOAuthTokenType;

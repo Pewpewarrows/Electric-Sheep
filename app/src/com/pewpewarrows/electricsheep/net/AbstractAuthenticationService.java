@@ -17,7 +17,7 @@ import android.os.IBinder;
 abstract public class AbstractAuthenticationService extends Service {
 
 	private AbstractAccountAuthenticator mAuthenticator;
-	protected Class<AbstractAccountAuthenticator> mAuthenticatorKlass;
+	protected Class mAuthenticatorKlass;
 
 	/**
 	 * {@inheritDoc}
