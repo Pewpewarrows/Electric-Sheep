@@ -7,7 +7,6 @@ import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.exception.OAuthNotAuthorizedException;
 
-import com.pewpewarrows.electricsheep.log.Log;
 import com.pewpewarrows.electricsheep.net.OAuth;
 
 import android.accounts.Account;
@@ -21,8 +20,6 @@ import android.os.Bundle;
  * TODO: This desperately needs a better name!
  */
 public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity {
-
-	private final int OAUTH_ACTIVITY_CODE = 1;
 
 	private AccountManager mAccountManager;
 	private OAuth mOAuth;
@@ -47,15 +44,15 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		/*
 		 * Note for future self to save frustration:
-		 * AccountAuthenticatorActivities cannot call startActivityForResult
-		 * for some weird reason. Well, the call technically works (the activity
-		 * starts), but this class is immediately given a response of 
+		 * AccountAuthenticatorActivities cannot call startActivityForResult for
+		 * some weird reason. Well, the call technically works (the activity
+		 * starts), but this class is immediately given a response of
 		 * RESULT_CANCELED, even while the new activity is all running fine and
 		 * dandy. But that new activity cannot ever inform this one of its
-		 * results, because this one already immediately received a 
+		 * results, because this one already immediately received a
 		 * RESULT_CANCELED from some phantom activity or something.
 		 * 
 		 * The normal startActivity call seems to work fine.
@@ -74,10 +71,8 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 		}
 
 		getRequestToken();
-		
-		Log.i("", "Completed OAuthAccountActivity onCreate");
 	}
-	
+
 	/**
 	 * Should be called after the OAuth authentication request returns, since
 	 * this activity is tied to the callback URL.
@@ -86,7 +81,6 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 	public void onNewIntent(Intent intent) {
 		super.onNewIntent(intent);
 
-		Log.i("", "Inside OAuthAccountActivity onNewIntent");
 		Uri uri = intent.getData();
 
 		if (uri != null && uri.getScheme().equals(mCallbackScheme)) {
@@ -96,7 +90,6 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 
 	private void getRequestToken() {
 		try {
-			Log.i("", "Inside OAuthAccountActivity getRequestToken");
 			String url = mOAuth.getRequestToken();
 			Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url))
 					.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP
@@ -119,13 +112,12 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 	}
 
 	private void getAccessToken(Uri uri) {
-		Log.i("", "Inside OAuthAccountActivity getAccessToken");
 		String verifier = uri
 				.getQueryParameter(oauth.signpost.OAuth.OAUTH_VERIFIER);
 
 		try {
 			String[] tokens = mOAuth.getAccessToken(verifier);
-			
+
 			setupOAuthAccount(tokens[0], tokens[1]);
 		} catch (OAuthMessageSignerException e) {
 			// TODO Auto-generated catch block
@@ -143,7 +135,6 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 	}
 
 	private void setupOAuthAccount(String oAuthToken, String oAuthSecret) {
-		Log.i("", "Inside OAuthAccountActivity setupOAuthAccount");
 		String username = getUsername();
 
 		Account account = new Account(username, mAccountType);
