@@ -135,7 +135,7 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 	}
 
 	private void setupOAuthAccount(String oAuthToken, String oAuthSecret) {
-		String username = getUsername();
+		String username = getUsername(oAuthToken, oAuthSecret);
 
 		Account account = new Account(username, mAccountType);
 
@@ -158,7 +158,7 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 		finish();
 	}
 
-	protected abstract String getUsername();
+	protected abstract String getUsername(String oAuthToken, String oAuthSecret);
 
 	public String getOAuthTokenType() {
 		return mOAuthTokenType;
