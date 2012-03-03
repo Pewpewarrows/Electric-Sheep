@@ -11,7 +11,7 @@ import android.os.Build;
  * same type of pattern to prevent init() from shim'ing compatibility multiple
  * times. The static inner class is also necessary to prevent the various other
  * non-empty shims from being loaded into memory at runtime, which would cause
- * an error due to them importing non-existant classes in specific SDK versions.
+ * an error due to them importing non-existent classes in specific SDK versions.
  * 
  * Assumes a minSdkVersion of at least 7.
  */
@@ -38,7 +38,7 @@ public abstract class CompatShim {
 		 * Each shim extends the previous version's shim. This ensures that all
 		 * compatibility fixes are applied down the chain.
 		 * 
-		 * TODO: Make these extendable and customizable by user's application.
+		 * TODO: Make these extendible and customizable by user's application.
 		 */
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
 			instance = new IceCreamSandwichShim(debug);

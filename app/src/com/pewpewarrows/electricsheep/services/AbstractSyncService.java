@@ -18,15 +18,15 @@ public abstract class AbstractSyncService extends Service {
 
 	private static final Object sSyncAdapterLock = new Object();
 	private static AbstractThreadedSyncAdapter sSyncAdapter = null;
+	@SuppressWarnings("rawtypes")
 	protected Class mSyncAdapterKlass;
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate() {
-		// TODO: super.onCreate(); ?
-
 		synchronized (sSyncAdapterLock) {
 			if (sSyncAdapter == null) {
 				try {
@@ -66,8 +66,6 @@ public abstract class AbstractSyncService extends Service {
 	 */
 	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO: super.onBind(intent); ?
-
 		return sSyncAdapter.getSyncAdapterBinder();
 	}
 

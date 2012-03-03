@@ -5,6 +5,7 @@ import org.apache.http.client.HttpClient;
 import android.app.Application;
 import android.content.SharedPreferences;
 
+import com.pewpewarrows.electricsheep.log.Log;
 import com.pewpewarrows.electricsheep.net.HttpClientFactory;
 import com.pewpewarrows.electricsheep.shim.CompatShim;
 
@@ -45,9 +46,12 @@ public abstract class ESApplication extends Application {
 	 *            general prefereces. The name of the overall application is a
 	 *            good choice.
 	 */
-	protected void setupApp(String name, int timeout) {
+	protected void setupApp(String name, boolean debug, int timeout) {
 		mHttpClient = HttpClientFactory.create(timeout);
 		mSettings = getSharedPreferences(name, MODE_PRIVATE);
+		
+		Log.setDebug(debug);
+		makeCompatible(debug);
 	}
 
 	/**
@@ -58,7 +62,7 @@ public abstract class ESApplication extends Application {
 	 * @param debug
 	 *            Enable options like StrictMode during development.
 	 */
-	protected void makeCompatible(boolean debug) {
+	private void makeCompatible(boolean debug) {
 		CompatShim.init(debug);
 	}
 

@@ -9,6 +9,7 @@ public class GingerbreadShim extends FroyoShim {
 		// Log and kill the application for violating StrictMode during
 		// development
 		if (debug) {
+			// .penaltyDialog() is also an option
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
 					.detectAll().penaltyLog().penaltyDeath().build());
 			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()

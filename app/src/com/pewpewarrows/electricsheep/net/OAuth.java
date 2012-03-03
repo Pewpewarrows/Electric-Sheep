@@ -94,9 +94,6 @@ public class OAuth {
 	 * Obtains an OAuthConsumer that uses existing authenticated secret keys and
 	 * tokens, which can then be used to sign any HttpRequest.
 	 * 
-	 * TODO: Passing in the preferences shouldn't be necessary. Possibly just
-	 * provide it the token and secret strings.
-	 * 
 	 * @param consumerKey
 	 * @param consumerSecret
 	 * @param oAuthToken

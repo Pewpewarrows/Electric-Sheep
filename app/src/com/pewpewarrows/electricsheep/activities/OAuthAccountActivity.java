@@ -7,6 +7,7 @@ import oauth.signpost.exception.OAuthExpectationFailedException;
 import oauth.signpost.exception.OAuthMessageSignerException;
 import oauth.signpost.exception.OAuthNotAuthorizedException;
 
+import com.pewpewarrows.electricsheep.log.Log;
 import com.pewpewarrows.electricsheep.net.OAuth;
 
 import android.accounts.Account;
@@ -20,9 +21,14 @@ import android.os.Bundle;
  * TODO: This desperately needs a better name!
  */
 public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity {
+	
+	private static final String TAG = OAuthAccountActivity.class.getName();
+	
+	public static final String PARAM_AUTHTOKEN_TYPE = "authTokenType";
 
 	private AccountManager mAccountManager;
 	private OAuth mOAuth;
+	private String mAuthTokenType;
 
 	protected String mConsumerKey;
 	protected String mConsumerSecret;
@@ -43,6 +49,7 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 	 */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		Log.v(TAG, "OAuthAccountActivity onCreate()");
 		super.onCreate(savedInstanceState);
 
 		/*
@@ -59,6 +66,9 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 		 */
 
 		mAccountManager = AccountManager.get(this);
+		
+		Intent intent = getIntent();
+		mAuthTokenType = intent.getStringExtra(PARAM_AUTHTOKEN_TYPE);
 
 		mOAuth = new OAuth(mConsumerKey, mConsumerSecret, mCallbackUrl);
 
@@ -79,6 +89,7 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 	 */
 	@Override
 	public void onNewIntent(Intent intent) {
+		Log.v(TAG, "OAuthAccountActivity onNewIntent()");
 		super.onNewIntent(intent);
 
 		Uri uri = intent.getData();
@@ -143,7 +154,7 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 		// ContentResolver.setSyncAutomatically(account,
 		// ContactsContract.AUTHORITY, true);
 
-		// TODO: Does this work?
+		// TODO: How long does AccountManager cache these for?
 		mAccountManager.setAuthToken(account, mOAuthTokenType, oAuthToken);
 		mAccountManager.setAuthToken(account, mOAuthSecretType, oAuthSecret);
 
@@ -151,7 +162,14 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 
 		intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, username);
 		intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, mAccountType);
-		// intent.putExtra(AccountManager.KEY_AUTHTOKEN, oAuthToken);
+		
+		if (mAuthTokenType != null) {
+			if (mAuthTokenType.equals(mOAuthTokenType)) {
+				intent.putExtra(AccountManager.KEY_AUTHTOKEN, oAuthToken);
+			} else if (mAuthTokenType.equals(mOAuthSecretType)) {
+				intent.putExtra(AccountManager.KEY_AUTHTOKEN, oAuthSecret);
+			}
+		}
 
 		setAccountAuthenticatorResult(intent.getExtras());
 		setResult(RESULT_OK, intent);
@@ -159,6 +177,10 @@ public abstract class OAuthAccountActivity extends AccountAuthenticatorActivity 
 	}
 
 	protected abstract String getUsername(String oAuthToken, String oAuthSecret);
+
+	public String getAccountType() {
+		return mAccountType;
+	}
 
 	public String getOAuthTokenType() {
 		return mOAuthTokenType;

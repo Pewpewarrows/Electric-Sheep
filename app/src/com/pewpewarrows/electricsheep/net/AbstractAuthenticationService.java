@@ -3,6 +3,8 @@ package com.pewpewarrows.electricsheep.net;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
+import com.pewpewarrows.electricsheep.log.Log;
+
 import android.accounts.AbstractAccountAuthenticator;
 import android.app.Service;
 import android.content.Context;
@@ -15,17 +17,21 @@ import android.os.IBinder;
  * and everything else is handled for them.
  */
 abstract public class AbstractAuthenticationService extends Service {
+	
+	private static final String TAG = AbstractAuthenticationService.class.getName();
 
 	private AbstractAccountAuthenticator mAuthenticator;
+	@SuppressWarnings("rawtypes")
 	protected Class mAuthenticatorKlass;
 
 	/**
 	 * {@inheritDoc}
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void onCreate() {
-		// TODO: super.onCreate(); ?
-
+		Log.v(TAG, "AbstractAuthenticationService onCreate()");
+		
 		try {
 			/*
 			 * All you need to know: makes a new instance of whatever class is
@@ -33,7 +39,7 @@ abstract public class AbstractAuthenticationService extends Service {
 			 */
 			Constructor<AbstractAccountAuthenticator> c = mAuthenticatorKlass
 					.getConstructor(new Class[] { Context.class });
-			// TODO: Should we be using getApplicationContext() instead of this?
+			// TODO: Should we be using getApplicationContext() instead of 'this'?
 			mAuthenticator = (AbstractAccountAuthenticator) c
 					.newInstance(new Object[] { this });
 		} catch (NoSuchMethodException e) {
@@ -58,9 +64,16 @@ abstract public class AbstractAuthenticationService extends Service {
 	 * {@inheritDoc}
 	 */
 	@Override
+	public void onDestroy() {
+		Log.v(TAG, "AbstractAuthenticationService onDestroy()");
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
 	public IBinder onBind(Intent intent) {
-		// TODO: super.onBind(intent); ?
-		
+		Log.v(TAG, "AbstractAuthenticationService onBind()");
 		return mAuthenticator.getIBinder();
 	}
 
