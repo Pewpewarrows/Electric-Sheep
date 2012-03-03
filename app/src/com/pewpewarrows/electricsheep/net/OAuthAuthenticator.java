@@ -37,7 +37,7 @@ public abstract class OAuthAuthenticator extends AbstractAccountAuthenticator {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected void extractInfoFromActiviy() {
+	protected void extractInfoFromActivity() {
 		try {
 			Method m = mAccountActivityKlass.getMethod("getAccountType",
 					new Class[] {});
