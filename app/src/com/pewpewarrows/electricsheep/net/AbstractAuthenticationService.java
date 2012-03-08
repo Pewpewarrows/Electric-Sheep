@@ -18,7 +18,7 @@ import android.os.IBinder;
  */
 abstract public class AbstractAuthenticationService extends Service {
 	
-	private static final String TAG = AbstractAuthenticationService.class.getName();
+	private static final String TAG = AbstractAuthenticationService.class.getSimpleName();
 
 	private AbstractAccountAuthenticator mAuthenticator;
 	@SuppressWarnings("rawtypes")

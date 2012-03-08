@@ -1,11 +1,5 @@
 package com.pewpewarrows.electricsheep.net;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
-import com.pewpewarrows.electricsheep.activities.OAuthAccountActivity;
-import com.pewpewarrows.electricsheep.log.Log;
-
 import android.accounts.AbstractAccountAuthenticator;
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorResponse;
@@ -15,15 +9,19 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
+import com.pewpewarrows.electricsheep.activities.OAuthAccountActivity;
+import com.pewpewarrows.electricsheep.log.Log;
+
 /**
  * TODO: This desperately needs a better name!
  */
 public abstract class OAuthAuthenticator extends AbstractAccountAuthenticator {
 
-	private static final String TAG = OAuthAuthenticator.class.getName();
+	private static final String TAG = OAuthAuthenticator.class.getSimpleName();
 
 	@SuppressWarnings("rawtypes")
 	protected Class mAccountActivityKlass;
+
 	protected String mAccountType;
 	protected String mOAuthTokenType;
 	protected String mOAuthSecretType;
@@ -34,35 +32,6 @@ public abstract class OAuthAuthenticator extends AbstractAccountAuthenticator {
 		super(context);
 
 		mContext = context;
-	}
-
-	@SuppressWarnings("unchecked")
-	protected void extractInfoFromActivity() {
-		try {
-			Method m = mAccountActivityKlass.getMethod("getAccountType",
-					new Class[] {});
-			mAccountType = (String) m.invoke(null);
-
-			m = mAccountActivityKlass.getMethod("getOAuthTokenType",
-					new Class[] {});
-			mOAuthTokenType = (String) m.invoke(null);
-
-			m = mAccountActivityKlass.getMethod("getOAuthSecretType",
-					new Class[] {});
-			mOAuthSecretType = (String) m.invoke(null);
-		} catch (NoSuchMethodException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalArgumentException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	/**
@@ -99,6 +68,11 @@ public abstract class OAuthAuthenticator extends AbstractAccountAuthenticator {
 		Intent intent = new Intent(mContext, mAccountActivityKlass);
 		intent.putExtra(OAuthAccountActivity.PARAM_AUTHTOKEN_TYPE,
 				authTokenType);
+		intent.putExtra(OAuthAccountActivity.PARAM_ACCOUNT_TYPE, mAccountType);
+		intent.putExtra(OAuthAccountActivity.PARAM_OAUTH_TOKEN_TYPE,
+				mOAuthTokenType);
+		intent.putExtra(OAuthAccountActivity.PARAM_OAUTH_SECRET_TYPE,
+				mOAuthSecretType);
 		intent.putExtra(AccountManager.KEY_ACCOUNT_AUTHENTICATOR_RESPONSE,
 				response);
 
@@ -154,9 +128,10 @@ public abstract class OAuthAuthenticator extends AbstractAccountAuthenticator {
 		/*
 		 * OAuth by default has no way to re-request an authToken. The whole
 		 * multi-step workflow must be repeated. For particular OAuth providers
-		 * such as Facebook who provide extensions for expiring tokens, 
-		 * override this method with custom logic.
+		 * such as Facebook who provide extensions for expiring tokens, override
+		 * this method with custom logic.
 		 */
+		
 		addAuthActivityToBundle(response, authTokenType, result);
 		return result;
 	}
@@ -167,7 +142,7 @@ public abstract class OAuthAuthenticator extends AbstractAccountAuthenticator {
 	@Override
 	public String getAuthTokenLabel(String authTokenType) {
 		Log.v(TAG, "OAuth getAuthTokenLabel()");
-		
+
 		if (authTokenType.equals(mOAuthTokenType)) {
 			return "OAuth Token";
 		} else if (authTokenType.equals(mOAuthSecretType)) {

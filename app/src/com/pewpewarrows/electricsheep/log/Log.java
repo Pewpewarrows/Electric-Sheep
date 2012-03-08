@@ -23,79 +23,98 @@ public class Log {
 		debugSet = true;
 		DEBUG = debug;
 	}
+	
+	private static String validateTag(String tag) {
+		if (tag.length() > 23) {
+			return tag.substring(0, 23);
+		}
+		
+		return tag;
+	}
 
 	public static int v(String tag, String msg) {
-		if (!DEBUG || !android.util.Log.isLoggable(tag, android.util.Log.VERBOSE)) {
+		tag = validateTag(tag);
+		if (!DEBUG && !android.util.Log.isLoggable(tag, android.util.Log.VERBOSE)) {
 			return 0;
 		}
 		return android.util.Log.v(tag, msg);
 	}
 
 	public static int v(String tag, String msg, Throwable tr) {
-		if (!DEBUG || !android.util.Log.isLoggable(tag, android.util.Log.VERBOSE)) {
+		tag = validateTag(tag);
+		if (!DEBUG && !android.util.Log.isLoggable(tag, android.util.Log.VERBOSE)) {
 			return 0;
 		}
 		return android.util.Log.v(tag, msg, tr);
 	}
 
 	public static int d(String tag, String msg) {
-		if (!DEBUG || !android.util.Log.isLoggable(tag, android.util.Log.DEBUG)) {
+		tag = validateTag(tag);
+		if (!DEBUG && !android.util.Log.isLoggable(tag, android.util.Log.DEBUG)) {
 			return 0;
 		}
 		return android.util.Log.d(tag, msg);
 	}
 
 	public static int d(String tag, String msg, Throwable tr) {
-		if (!DEBUG || !android.util.Log.isLoggable(tag, android.util.Log.DEBUG)) {
+		tag = validateTag(tag);
+		if (!DEBUG && !android.util.Log.isLoggable(tag, android.util.Log.DEBUG)) {
 			return 0;
 		}
 		return android.util.Log.d(tag, msg, tr);
 	}
 
 	public static int i(String tag, String msg) {
-		if (!android.util.Log.isLoggable(tag, android.util.Log.INFO)) {
+		tag = validateTag(tag);
+		if (!DEBUG && !android.util.Log.isLoggable(tag, android.util.Log.INFO)) {
 			return 0;
 		}
 		return android.util.Log.i(tag, msg);
 	}
 
 	public static int i(String tag, String msg, Throwable tr) {
-		if (!android.util.Log.isLoggable(tag, android.util.Log.INFO)) {
+		tag = validateTag(tag);
+		if (!DEBUG && !android.util.Log.isLoggable(tag, android.util.Log.INFO)) {
 			return 0;
 		}
 		return android.util.Log.i(tag, msg, tr);
 	}
 
 	public static int w(String tag, String msg) {
-		if (!android.util.Log.isLoggable(tag, android.util.Log.WARN)) {
+		tag = validateTag(tag);
+		if (!DEBUG && !android.util.Log.isLoggable(tag, android.util.Log.WARN)) {
 			return 0;
 		}
 		return android.util.Log.w(tag, msg);
 	}
 
 	public static int w(String tag, Throwable tr) {
-		if (!android.util.Log.isLoggable(tag, android.util.Log.WARN)) {
+		tag = validateTag(tag);
+		if (!DEBUG && !android.util.Log.isLoggable(tag, android.util.Log.WARN)) {
 			return 0;
 		}
 		return android.util.Log.w(tag, tr);
 	}
 
 	public static int w(String tag, String msg, Throwable tr) {
-		if (!android.util.Log.isLoggable(tag, android.util.Log.WARN)) {
+		tag = validateTag(tag);
+		if (!DEBUG && !android.util.Log.isLoggable(tag, android.util.Log.WARN)) {
 			return 0;
 		}
 		return android.util.Log.w(tag, msg, tr);
 	}
 
 	public static int e(String tag, String msg) {
-		if (!android.util.Log.isLoggable(tag, android.util.Log.ERROR)) {
+		tag = validateTag(tag);
+		if (!DEBUG && !android.util.Log.isLoggable(tag, android.util.Log.ERROR)) {
 			return 0;
 		}
 		return android.util.Log.e(tag, msg);
 	}
 
 	public static int e(String tag, String msg, Throwable tr) {
-		if (!android.util.Log.isLoggable(tag, android.util.Log.ERROR)) {
+		tag = validateTag(tag);
+		if (!DEBUG && !android.util.Log.isLoggable(tag, android.util.Log.ERROR)) {
 			return 0;
 		}
 		return android.util.Log.e(tag, msg, tr);
