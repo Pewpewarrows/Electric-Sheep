@@ -11,9 +11,9 @@ public class GingerbreadShim extends FroyoShim {
 		if (debug) {
 			// .penaltyDialog() is also an option
 			StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-					.detectAll().penaltyLog().penaltyDeath().build());
+					.detectAll().penaltyLog().build());
 			StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-					.detectAll().penaltyLog().penaltyDeath().build());
+					.detectAll().penaltyLog().build());
 		}
 	}
 }
